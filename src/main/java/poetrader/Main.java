@@ -32,7 +32,7 @@ public class Main extends Application {
         primaryStage.show();
 
         Thread api = new Thread(new APIThread());
-        api.start();
+       // api.start();
 
         WebSocket ws = new WebSocket("tesimetadayoki");
         ws.connect();
