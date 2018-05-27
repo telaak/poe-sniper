@@ -1,7 +1,6 @@
 package poetrader;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -76,10 +75,6 @@ public class WebSocket {
                 System.out.print(response.data);
                 newid = response.newid;
             }
-        } catch (ProtocolException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

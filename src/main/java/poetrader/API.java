@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class API {
     String next_change_id;
     JsonArray stashes;
-    ArrayList<JsonObject> stashList = new ArrayList();
+    ArrayList<JsonObject> stashList = new ArrayList<>();
     URL url;
 
     public API() {
