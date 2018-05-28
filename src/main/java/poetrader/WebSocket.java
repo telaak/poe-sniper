@@ -1,7 +1,6 @@
 package poetrader;
 
 import com.google.gson.Gson;
-import javafx.stage.Stage;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.jsoup.Jsoup;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -28,8 +26,10 @@ import static java.lang.Thread.sleep;
 
 public class WebSocket {
     WebSocketClient poeTradeWebSocket;
+    WebSocketListener webSocketListener;
     HttpURLConnection connection;
     ResponseJson response;
+    Document doc;
     String poeTradeUrl;
     String newid;
 
@@ -100,7 +100,7 @@ public class WebSocket {
     }
 
     public void parseData() {
-        Document doc = Jsoup.parse(response.data);
+        doc = Jsoup.parse(response.data);
         Elements item = doc.select(".item");
         for(Element element : item) {
             String inGameName = element.attr("data-ign");
@@ -132,13 +132,16 @@ public class WebSocket {
                     robot.keyRelease(KeyEvent.VK_V);
                     robot.keyPress(KeyEvent.VK_ENTER);
                     robot.keyRelease(KeyEvent.VK_ENTER);
-                } catch (AWTException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (AWTException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
+        sendItemUpdateData();
+    }
+
+    public void sendItemUpdateData() {
+        webSocketListener.itemData(doc);
     }
 }
 
@@ -146,6 +149,10 @@ class ResponseJson {
     String newid;
     String count;
     String data;
+}
+
+interface WebSocketListener {
+    void itemData(Document document);
 }
 
 
