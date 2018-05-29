@@ -12,6 +12,7 @@ import static java.lang.Thread.sleep;
 public class APIThread implements Runnable {
     API api = new API();
 
+    @SuppressWarnings("InfiniteLoopStatement")
     @Override
     public void run() {
         while(true) {
@@ -24,6 +25,7 @@ public class APIThread implements Runnable {
             api = new Gson().fromJson(reader, API.class);
             api.parseStashes();
             try {
+                //noinspection SpellCheckingInspection
                 System.out.println(api.findStashByAccountName("\"Hillo\"").toString());
             }
             catch (NullPointerException e){

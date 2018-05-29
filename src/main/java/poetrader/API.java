@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class API {
     String next_change_id;
     JsonArray stashes;

@@ -24,6 +24,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 
 import static java.lang.Thread.sleep;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class WebSocket {
     WebSocketClient poeTradeWebSocket;
     WebSocketListener webSocketListener;
@@ -31,15 +32,23 @@ public class WebSocket {
     ResponseJson response;
     Document doc;
     String poeTradeUrl;
+    @SuppressWarnings("SpellCheckingInspection")
     String newid;
 
-    public WebSocket(final String poeTradeURL) {
-        this.poeTradeUrl = poeTradeURL;
+    /**
+     * The constructor creates the WebSocket connection and sets its listener methods, and finally connects
+     * @param poeTradeSearchString The poe.trade search string to connect to
+     */
+
+    public WebSocket(final String poeTradeSearchString) {
+        this.poeTradeUrl = poeTradeSearchString;
         poeTradeWebSocket = null;
         try {
-            poeTradeWebSocket = new WebSocketClient( new URI( "ws://live.poe.trade/" + poeTradeURL )) {
+            //noinspection SpellCheckingInspection
+            poeTradeWebSocket = new WebSocketClient( new URI( "ws://live.poe.trade/" + poeTradeSearchString )) {
                 @Override
                 public void onMessage(String s) {
+                    /* Sends a POST request to fetch the item data */
                     sendHttpPostRequest("http://poe.trade/search/" + poeTradeUrl + "/live","id=" + newid);
                     parseData();
                 }
@@ -47,6 +56,9 @@ public class WebSocket {
                 @Override
                 public void onOpen( ServerHandshake handshake ) {
                     System.out.println( "WebSocket open" );
+                    /* When opening for the first time, sends a POST request with a negative id to fetch
+                     * a working newid for messages
+                     */
                     sendHttpPostRequest("http://poe.trade/search/" + poeTradeUrl + "/live","id=-1");
                 }
 
@@ -75,6 +87,13 @@ public class WebSocket {
         poeTradeWebSocket.close();
     }
 
+    /**
+     * Sends a POST request and gives the response to be parsed by gson into a separate ResponseJson class.
+     * Also updates the newid value for the next request
+     * @param url The url that the request is sent to
+     * @param parameters The parameters sent with the request
+     */
+
     public void sendHttpPostRequest(String url, String parameters) {
         byte[] postData = parameters.getBytes(StandardCharsets.UTF_8);
         try {
@@ -99,10 +118,17 @@ public class WebSocket {
         }
     }
 
+    /** Parses the data from the ResponseJson's data node (HTML) into a jsoup document
+     * The document is then scanned for 'item' classes and iterated through attribute values to generate a message
+     * The message is then copied to the clipboard and sent to the Path of Exile window
+     * Finally, the document is sent to its listeners
+     */
+
     public void parseData() {
         doc = Jsoup.parse(response.data);
         Elements item = doc.select(".item");
         for(Element element : item) {
+           // System.out.println(doc);
             String inGameName = element.attr("data-ign");
             String itemName = element.attr("data-name");
             String buyout = element.attr("data-buyout");
@@ -114,10 +140,7 @@ public class WebSocket {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(selection, selection);
             HWND hwnd = User32.INSTANCE.FindWindow(null, "Path of Exile");
-            if (hwnd == null) {
-                System.out.println("Window is not running");
-            }
-            else{
+            if (hwnd != null) {
                 try {
                     Robot robot = new Robot();
                     User32.INSTANCE.SetFocus(hwnd);
@@ -145,7 +168,9 @@ public class WebSocket {
     }
 }
 
+@SuppressWarnings("ALL")
 class ResponseJson {
+    @SuppressWarnings({"SpellCheckingInspection", "unused"})
     String newid;
     String count;
     String data;
