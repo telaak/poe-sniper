@@ -14,8 +14,6 @@ Java 1.8+, JDK, JavaFX
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
 Clone or download the repository
 
 ```
