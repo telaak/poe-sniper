@@ -2,7 +2,7 @@
 
 Sniping tool for poe.trade searches. Uses poe.trade's search strings to listen to websocket messages. Automatically logs found items in a table and copies the most recent entry to your clipboard.
 
-![Screenshot](https://laaksonen.me/poe-trader.png)
+![Screenshot](https://laaksonen.eu/poe-trader.png)
 
 ## Getting Started
 
